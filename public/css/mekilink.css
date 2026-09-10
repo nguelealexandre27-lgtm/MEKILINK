@@ -1,0 +1,841 @@
+/* ==========================================================================
+   MEKILINK - Design System CSS3 Pur & Innovant (Sans cliché IA)
+   Identité Visuelle d'Urgence Médicale & Sauvegarde de Vies Humaines
+   ========================================================================== */
+
+:root {
+    /* Palette Chromatique Médicale */
+    --blood-dark: #7f1d1d;
+    --blood-primary: #991b1b;
+    --blood-crimson: #be123c;
+    --blood-arterial: #dc2626;
+    --blood-light: #fef2f2;
+    --blood-surface: #fff5f5;
+
+    /* Neutres Cliniques Haute Lisibilité */
+    --slate-950: #090d16;
+    --slate-900: #0f172a;
+    --slate-800: #1e293b;
+    --slate-700: #334155;
+    --slate-600: #475569;
+    --slate-400: #94a3b8;
+    --slate-200: #e2e8f0;
+    --slate-100: #f1f5f9;
+    --slate-50: #f8fafc;
+    --white: #ffffff;
+
+    /* Statuts Médicaux */
+    --urgency-vital: #b91c1c;
+    --urgency-urgent: #c2410c;
+    --urgency-medium: #d97706;
+    --urgency-low: #2563eb;
+    --status-success: #047857;
+    --status-success-bg: #ecfdf5;
+    --status-warning: #b45309;
+    --status-warning-bg: #fffbeb;
+    --status-danger: #be123c;
+    --status-danger-bg: #fff1f2;
+
+    /* Typographie et Rythme */
+    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    
+    /* Rayons & Ombres Tactiles */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+    --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+    --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+    --shadow-glow-vital: 0 0 0 3px rgba(220, 38, 38, 0.25);
+    --shadow-glow-blood: 0 0 20px rgba(185, 28, 28, 0.15);
+
+    --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Base & Reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--slate-50);
+    color: var(--slate-800);
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+a {
+    color: var(--blood-crimson);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+a:hover {
+    color: var(--blood-primary);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ==========================================================================
+   En-tête & Barre d'Urgence Supérieure
+   ========================================================================== */
+.emergency-ticker {
+    background: linear-gradient(90deg, var(--slate-950) 0%, var(--blood-dark) 100%);
+    color: var(--white);
+    padding: 6px 16px;
+    font-size: 0.82rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.emergency-ticker .ticker-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--blood-arterial);
+    color: var(--white);
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.emergency-ticker .ticker-pulse {
+    width: 6px;
+    height: 6px;
+    background: var(--white);
+    border-radius: 50%;
+    animation: heartPulse 1.2s infinite;
+}
+
+.site-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--slate-200);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+.header-container {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 1.35rem;
+    color: var(--slate-900);
+    letter-spacing: -0.02em;
+}
+
+.logo-link:hover {
+    color: var(--slate-900);
+}
+
+.logo-drop {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--blood-arterial) 0%, var(--blood-dark) 100%);
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(185, 28, 28, 0.35);
+    flex-shrink: 0;
+}
+
+.logo-drop svg {
+    transform: rotate(45deg);
+    fill: var(--white);
+    width: 16px;
+    height: 16px;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.logo-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--slate-900);
+}
+
+.logo-title span {
+    color: var(--blood-arterial);
+}
+
+.logo-subtitle {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--slate-600);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    list-style: none;
+}
+
+.nav-item a {
+    color: var(--slate-700);
+    font-size: 0.92rem;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+
+.nav-item a:hover,
+.nav-item a.active {
+    color: var(--blood-primary);
+    background: var(--blood-light);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* ==========================================================================
+   Badges des Groupes Sanguins (Style Poches Médicales)
+   ========================================================================== */
+.blood-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-weight: 800;
+    border-radius: var(--radius-sm);
+    letter-spacing: -0.02em;
+    position: relative;
+    border: 2px solid currentColor;
+    background: var(--white);
+    color: var(--blood-primary);
+    padding: 4px 8px;
+    min-width: 44px;
+    text-align: center;
+}
+
+.blood-badge.sm {
+    font-size: 0.78rem;
+    padding: 2px 6px;
+    min-width: 36px;
+    border-width: 1.5px;
+}
+
+.blood-badge.lg {
+    font-size: 1.5rem;
+    padding: 10px 16px;
+    min-width: 64px;
+    border-width: 3px;
+    box-shadow: var(--shadow-sm);
+}
+
+.blood-badge.filled {
+    background: var(--blood-primary);
+    color: var(--white);
+    border-color: var(--blood-primary);
+}
+
+.blood-badge.o-neg {
+    background: var(--blood-dark);
+    color: var(--white);
+    border-color: var(--blood-dark);
+}
+
+/* Badges d'urgence */
+.badge-vitale {
+    background: #fef2f2;
+    color: var(--urgency-vital);
+    border: 1px solid #fecaca;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.78rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.badge-urgente {
+    background: #fff7ed;
+    color: var(--urgency-urgent);
+    border: 1px solid #ffedd5;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.78rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.badge-moyenne {
+    background: #fefce8;
+    color: var(--urgency-medium);
+    border: 1px solid #fef08a;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.78rem;
+}
+
+.badge-faible {
+    background: #eff6ff;
+    color: var(--urgency-low);
+    border: 1px solid #bfdbfe;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.78rem;
+}
+
+.badge-success {
+    background: var(--status-success-bg);
+    color: var(--status-success);
+    border: 1px solid #a7f3d0;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.78rem;
+}
+
+.badge-warning {
+    background: var(--status-warning-bg);
+    color: var(--status-warning);
+    border: 1px solid #fde68a;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.78rem;
+}
+
+.badge-danger {
+    background: var(--status-danger-bg);
+    color: var(--status-danger);
+    border: 1px solid #fecdd3;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.78rem;
+}
+
+.badge-info {
+    background: #f0f9ff;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.78rem;
+}
+
+/* ==========================================================================
+   Boutons et Actions
+   ========================================================================== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 18px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+.btn-primary {
+    background: var(--blood-primary);
+    color: var(--white);
+    box-shadow: 0 2px 4px rgba(153, 27, 27, 0.2);
+}
+
+.btn-primary:hover {
+    background: var(--blood-dark);
+    color: var(--white);
+    box-shadow: 0 4px 8px rgba(153, 27, 27, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn-vital {
+    background: linear-gradient(135deg, var(--blood-arterial) 0%, var(--blood-primary) 100%);
+    color: var(--white);
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.btn-vital:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
+    color: var(--white);
+    box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: var(--white);
+    color: var(--slate-700);
+    border-color: var(--slate-200);
+}
+
+.btn-secondary:hover {
+    background: var(--slate-100);
+    color: var(--slate-900);
+    border-color: var(--slate-300);
+}
+
+.btn-danger {
+    background: #be123c;
+    color: var(--white);
+}
+
+.btn-danger:hover {
+    background: #9f1239;
+    color: var(--white);
+}
+
+.btn-success {
+    background: var(--status-success);
+    color: var(--white);
+}
+
+.btn-success:hover {
+    background: #065f46;
+    color: var(--white);
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.82rem;
+}
+
+.btn-lg {
+    padding: 14px 26px;
+    font-size: 1.05rem;
+    border-radius: var(--radius-md);
+}
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ==========================================================================
+   Conteneurs, Cartes & Grilles Fluides
+   ========================================================================== */
+.container {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 24px 20px;
+    width: 100%;
+}
+
+.page-header {
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--slate-900);
+    letter-spacing: -0.02em;
+}
+
+.page-subtitle {
+    font-size: 0.95rem;
+    color: var(--slate-600);
+    margin-top: 4px;
+}
+
+.card {
+    background: var(--white);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.card:hover {
+    border-color: #cbd5e1;
+    box-shadow: var(--shadow-md);
+}
+
+.card-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--slate-200);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: #fdfefe;
+}
+
+.card-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--slate-900);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-body {
+    padding: 22px;
+}
+
+.card-footer {
+    padding: 14px 22px;
+    border-top: 1px solid var(--slate-200);
+    background: var(--slate-50);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Grilles */
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.grid-1-2 {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 24px;
+}
+
+.grid-2-1 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+}
+
+/* ==========================================================================
+   Indicateurs de Score IA (Innovant & Sobre)
+   ========================================================================== */
+.ai-score-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: 0.88rem;
+    font-family: var(--font-mono);
+    border: 1px solid currentColor;
+}
+
+.ai-score-high {
+    background: #f0fdf4;
+    color: #15803d;
+    border-color: #86efac;
+}
+
+.ai-score-medium {
+    background: #fffbeb;
+    color: #b45309;
+    border-color: #fde68a;
+}
+
+.ai-score-bar-bg {
+    width: 100%;
+    height: 8px;
+    background: var(--slate-200);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-top: 6px;
+}
+
+.ai-score-bar-fill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+    transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==========================================================================
+   Toggle Tactile de Disponibilité (1-Click)
+   ========================================================================== */
+.disponibilite-card {
+    background: var(--white);
+    border: 2px solid var(--slate-200);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    transition: var(--transition);
+}
+
+.disponibilite-card.active {
+    border-color: #10b981;
+    background: #f0fdf4;
+}
+
+.disponibilite-info h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--slate-900);
+    margin-bottom: 4px;
+}
+
+.disponibilite-info p {
+    font-size: 0.88rem;
+    color: var(--slate-600);
+}
+
+.toggle-switch-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.toggle-switch-btn.is-active {
+    background: #059669;
+    color: var(--white);
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+}
+
+.toggle-switch-btn.is-inactive {
+    background: var(--slate-300);
+    color: var(--slate-700);
+}
+
+/* ==========================================================================
+   Formulaires Médicaux Ergonomiques
+   ========================================================================== */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--slate-800);
+    margin-bottom: 6px;
+}
+
+.form-control,
+.form-select,
+textarea.form-control {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--slate-900);
+    background: var(--white);
+    border: 1px solid var(--slate-300);
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+    outline: none;
+}
+
+.form-control:focus,
+.form-select:focus,
+textarea.form-control:focus {
+    border-color: var(--blood-primary);
+    box-shadow: 0 0 0 3px rgba(153, 27, 27, 0.12);
+}
+
+.form-hint {
+    font-size: 0.78rem;
+    color: var(--slate-600);
+    margin-top: 4px;
+}
+
+.form-error {
+    font-size: 0.82rem;
+    color: var(--blood-arterial);
+    margin-top: 4px;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   Alertes Flash
+   ========================================================================== */
+.alert {
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.92rem;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: var(--status-success-bg);
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.alert-error, .alert-danger {
+    background: var(--status-danger-bg);
+    color: #9f1239;
+    border: 1px solid #fecdd3;
+}
+
+.alert-warning {
+    background: var(--status-warning-bg);
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+
+.alert-info {
+    background: #f0f9ff;
+    color: #075985;
+    border: 1px solid #bae6fd;
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+@keyframes heartPulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.35); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.pulse-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: var(--blood-arterial);
+    border-radius: 50%;
+    animation: heartPulse 1.4s infinite;
+}
+
+/* ==========================================================================
+   Responsive & Mobile
+   ========================================================================== */
+.mobile-bottom-nav {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    .grid-2, .grid-3, .grid-4, .grid-1-2, .grid-2-1 {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+
+    .mobile-bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--white);
+        border-top: 1px solid var(--slate-200);
+        z-index: 1000;
+        padding: 8px 12px;
+        justify-content: space-around;
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .mobile-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--slate-600);
+        padding: 4px 8px;
+    }
+
+    .mobile-nav-item.active {
+        color: var(--blood-primary);
+    }
+
+    .page-title {
+        font-size: 1.4rem;
+    }
+
+    body {
+        padding-bottom: 70px;
+    }
+}
