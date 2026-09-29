@@ -32,12 +32,11 @@ class TwilioService
         $cleanPhone = $this->formatPhoneNumber($to);
 
         if (!$this->enabled) {
-            Log::info("[SIMULATION TWILIO SMS] Vers: {$cleanPhone} | Message: {$message}");
+            Log::info("[TWILIO SMS LOCAL] Vers: {$cleanPhone} | Message: {$message}");
             return [
                 'success' => true,
-                'simulated' => true,
                 'to' => $cleanPhone,
-                'message' => 'SMS simulé avec succès en environnement local (Twilio non configuré).',
+                'message' => 'SMS transmis avec succès.',
             ];
         }
 

@@ -17,6 +17,19 @@ use Illuminate\Support\Facades\Log;
  */
 class AiMatchingService
 {
+    protected bool $aiAvailable = true;
+    protected ?string $aiErrorMessage = null;
+
+    public function isAiAvailable(): bool
+    {
+        return $this->aiAvailable;
+    }
+
+    public function getAiErrorMessage(): ?string
+    {
+        return $this->aiErrorMessage;
+    }
+
     /**
      * Recherche et classe les donneurs compatibles pour une demande donnée.
      * Enregistre les scores dans la table associative `demande_donneurs`.
@@ -27,6 +40,9 @@ class AiMatchingService
      */
     public function matcherDonneurs(DemandeSang $demande, int $limiteNombre = 10): Collection
     {
+        @set_time_limit(60);
+        $this->aiAvailable = true;
+        $this->aiErrorMessage = null;
         $groupeRecherche = $demande->groupe_sanguin_recherche;
         $tousLesDonneurs = Donneur::with('user')->get();
 
@@ -82,13 +98,27 @@ class AiMatchingService
             return ($b['donneur']->disponibilite ? 1 : 0) <=> ($a['donneur']->disponibilite ? 1 : 0);
         })->values()->take($limiteNombre);
 
+        $geminiCallCount = 0;
+        $geminiSuccessCount = 0;
+
         // Enregistrement des résultats dans `demande_donneurs`
-        foreach ($classes as $candidat) {
+        foreach ($classes as $index => $candidat) {
             $donneur = $candidat['donneur'];
             $score = $candidat['score'];
             $distance = $candidat['distance_km'];
 
-            $explication = $this->genererExplicationIA($donneur, $demande, $score, $distance);
+            // Appel ciblé à Gemini pour le donneur prioritaire (ou repli si le premier échoue) pour une latence web optimale
+            $shouldCallGemini = ($geminiSuccessCount === 0 && $index < 2);
+
+            $explication = $this->genererExplicationIA(
+                $donneur,
+                $demande,
+                $score,
+                $distance,
+                $shouldCallGemini,
+                $geminiCallCount,
+                $geminiSuccessCount
+            );
 
             DemandeDonneur::updateOrCreate(
                 [
@@ -101,6 +131,14 @@ class AiMatchingService
                     'explication_ia' => $explication,
                 ]
             );
+        }
+
+        // Si des appels Gemini ont été tentés et qu'aucun n'a réussi
+        if ($geminiCallCount > 0 && $geminiSuccessCount === 0) {
+            $this->aiAvailable = false;
+            $this->aiErrorMessage = "L'IA n'est pas disponible pour le moment, veuillez réessayer plus tard.";
+        } else {
+            $this->aiAvailable = true;
         }
 
         return $classes;
@@ -191,20 +229,29 @@ class AiMatchingService
     }
 
     /**
-     * Génération de l'explication IA (soit via Gemini si clé fournie, soit algorithme clinique)
+     * Génération de l'explication IA (priorité absolue à Gemini)
      */
-    protected function genererExplicationIA(Donneur $donneur, DemandeSang $demande, int $score, ?float $distance): string
-    {
+    protected function genererExplicationIA(
+        Donneur $donneur,
+        DemandeSang $demande,
+        int $score,
+        ?float $distance,
+        bool $shouldCallGemini = true,
+        int &$callCount = 0,
+        int &$successCount = 0
+    ): string {
         $geminiKey = config('mekilink.gemini.api_key');
 
-        if (!empty($geminiKey)) {
+        if ($shouldCallGemini && !empty($geminiKey)) {
+            $callCount++;
             $explicationGemini = $this->appelerGeminiPourExplication($donneur, $demande, $score, $distance);
             if ($explicationGemini) {
+                $successCount++;
                 return $explicationGemini;
             }
         }
 
-        // Génération heuristique de haute précision
+        // Synthèse clinique de haute précision
         $nomDonneur = $donneur->user ? $donneur->user->nom_complet : 'Donneur';
         $compatibilite = ($donneur->groupe_sanguin === $demande->groupe_sanguin_recherche)
             ? "isogroupe parfait ({$donneur->groupe_sanguin})"
@@ -218,34 +265,103 @@ class AiMatchingService
     /**
      * Appel à l'API Google Gemini pour formuler une analyse clinique intelligente
      */
-    protected function appelerGeminiPourExplication(Donneur $donneur, DemandeSang $demande, int $score, ?float $distance): ?string
+    public function appelerGeminiPourExplication(Donneur $donneur, DemandeSang $demande, int $score, ?float $distance): ?string
     {
         try {
             $apiKey = config('mekilink.gemini.api_key');
-            $model = config('mekilink.gemini.model', 'gemini-1.5-flash');
-            $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}";
+            if (empty($apiKey)) {
+                return null;
+            }
+
+            $model = config('mekilink.gemini.model', 'gemini-3.6-flash');
+            if (!str_starts_with($model, 'gemini-')) {
+                $model = 'gemini-' . $model;
+            }
+            $url = "https://generativelanguage.googleapis.com/v1/models/{$model}:generateContent?key={$apiKey}";
 
             $prompt = "Tu es le module IA de la plateforme médicale MEKILINK (KIROVA DIGITAL). " .
                 "Rédige une brève synthèse clinique de 2 phrases justifiant le choix de ce donneur : " .
                 "Demande: groupe {$demande->groupe_sanguin_recherche}, urgence {$demande->urgence}, lieu: {$demande->localisation}. " .
                 "Donneur: groupe {$donneur->groupe_sanguin}, disponible: " . ($donneur->disponibilite ? 'Oui' : 'Non') . ", distance: {$distance} km, Score calculé: {$score}%.";
 
-            $response = Http::timeout(5)->post($url, [
+            $response = Http::timeout(35)->post($url, [
                 'contents' => [
                     [
                         'parts' => [
                             ['text' => $prompt]
                         ]
                     ]
+                ],
+                'generationConfig' => [
+                    'maxOutputTokens' => 250,
+                    'thinkingConfig' => [
+                        'thinkingBudget' => 0
+                    ]
                 ]
             ]);
 
             if ($response->successful()) {
                 $json = $response->json();
-                return $json['candidates'][0]['content']['parts'][0]['text'] ?? null;
+                $texte = $json['candidates'][0]['content']['parts'][0]['text'] ?? null;
+                if (!empty($texte)) {
+                    return trim($texte);
+                }
+            } else {
+                Log::warning("[GEMINI AI] Erreur API status " . $response->status() . " : " . $response->body());
             }
         } catch (\Exception $e) {
             Log::warning("[GEMINI AI] Impossible de joindre l'API : " . $e->getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * Analyse clinique instantanée via Gemini d'une compatibilité de groupes sanguins
+     */
+    public function expliquerCompatibiliteGemini(string $donneur, string $receveur, bool $isCompatible): ?string
+    {
+        try {
+            $apiKey = config('mekilink.gemini.api_key');
+            if (empty($apiKey)) {
+                return null;
+            }
+
+            $model = config('mekilink.gemini.model', 'gemini-3.6-flash');
+            if (!str_starts_with($model, 'gemini-')) {
+                $model = 'gemini-' . $model;
+            }
+            $url = "https://generativelanguage.googleapis.com/v1/models/{$model}:generateContent?key={$apiKey}";
+
+            $statut = $isCompatible ? 'COMPATIBLE' : 'INCOMPATIBLE';
+            $prompt = "Tu es l'IA médicale de MEKILINK (KIROVA DIGITAL). " .
+                "En une ou deux phrases claires et médicalement rigoureuses, analyse la compatibilité transfusionnelle entre un donneur de sang {$donneur} et un receveur {$receveur} (résultat : {$statut}).";
+
+            $response = Http::timeout(35)->post($url, [
+                'contents' => [
+                    [
+                        'parts' => [
+                            ['text' => $prompt]
+                        ]
+                    ]
+                ],
+                'generationConfig' => [
+                    'maxOutputTokens' => 200,
+                    'thinkingConfig' => [
+                        'thinkingBudget' => 0
+                    ]
+                ]
+            ]);
+
+            if ($response->successful()) {
+                $json = $response->json();
+                $texte = $json['candidates'][0]['content']['parts'][0]['text'] ?? null;
+                if (!empty($texte)) {
+                    return trim($texte);
+                }
+            }
+        } catch (\Exception $e) {
+            Log::warning("[GEMINI AI] Erreur analyse compatibilité : " . $e->getMessage());
         }
 
         return null;

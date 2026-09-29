@@ -40,24 +40,6 @@
                     Se Connecter
                 </button>
             </form>
-
-            <!-- Raccourcis Comptes de Démonstration (Spécial Soutenance) -->
-            <div style="margin-top:24px;padding:14px;background:var(--slate-50);border:1px dashed var(--slate-300);border-radius:var(--radius-sm);">
-                <div style="font-size:0.75rem;font-weight:700;color:var(--slate-600);text-transform:uppercase;margin-bottom:8px;text-align:center;">
-                    Comptes de Test (Cliquer pour remplir) :
-                </div>
-                <div style="display:flex;flex-direction:column;gap:6px;">
-                    <button type="button" class="btn btn-secondary btn-sm" style="font-size:0.75rem;text-align:left;justify-content:flex-start;" onclick="fillLogin('admin@mekilink.org', 'password')">
-                        🛡️ <strong>Administrateur :</strong> admin@mekilink.org
-                    </button>
-                    <button type="button" class="btn btn-secondary btn-sm" style="font-size:0.75rem;text-align:left;justify-content:flex-start;" onclick="fillLogin('donneur.o_neg@mekilink.org', 'password')">
-                        🩸 <strong>Donneur (O-) :</strong> donneur.o_neg@mekilink.org
-                    </button>
-                    <button type="button" class="btn btn-secondary btn-sm" style="font-size:0.75rem;text-align:left;justify-content:flex-start;" onclick="fillLogin('demandeur.hopital@mekilink.org', 'password')">
-                        🏥 <strong>Demandeur (Hôpital) :</strong> demandeur.hopital@mekilink.org
-                    </button>
-                </div>
-            </div>
         </div>
 
         <div class="card-footer" style="text-align:center;justify-content:center;background:var(--slate-50);font-size:0.88rem;">
@@ -66,13 +48,4 @@
         </div>
     </div>
 </div>
-
-@push('scripts')
-<script>
-function fillLogin(email, pwd) {
-    document.getElementById('email').value = email;
-    document.getElementById('password').value = pwd;
-}
-</script>
-@endpush
 @endsection

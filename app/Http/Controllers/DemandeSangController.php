@@ -98,8 +98,13 @@ class DemandeSangController extends Controller
             'date_besoin' => $validated['date_besoin'] ?? now()->addHours(6),
         ]);
 
-        // 1. DÉCLENCHEMENT DE L'IA DE MATCHING
+        // 1. DÉCLENCHEMENT PRIORITAIRE DE L'IA DE MATCHING
         $candidats = $this->aiService->matcherDonneurs($demande);
+
+        if (!$this->aiService->isAiAvailable()) {
+            session()->flash('ai_unavailable', true);
+            session()->flash('ai_message', "L'IA n'est pas disponible pour le moment, veuillez réessayer plus tard.");
+        }
 
         // 2. ENVOI DES NOTIFICATIONS SMS AUTOMATIQUES AUX MEILLEURS CANDIDATS (Top 3)
         $topCandidats = $candidats->take(3);
@@ -150,7 +155,15 @@ class DemandeSangController extends Controller
         $demande = DemandeSang::findOrFail($id);
         $candidats = $this->aiService->matcherDonneurs($demande);
 
-        return back()->with('success', "L'algorithme IA a réactualisé les correspondances : " . count($candidats) . " donneurs analysés.");
+        if (!$this->aiService->isAiAvailable()) {
+            return back()->with([
+                'ai_unavailable' => true,
+                'ai_message' => "L'IA n'est pas disponible pour le moment, veuillez réessayer plus tard.",
+                'info' => "Scores actualisés selon les critères médicaux. (L'IA Gemini n'a pas pu être jointe)."
+            ]);
+        }
+
+        return back()->with('success', "L'IA a réactualisé les correspondances : " . count($candidats) . " donneurs analysés.");
     }
 
     public function notifierDonneur(Request $request, int $demandeId, int $donneurId): RedirectResponse
@@ -179,11 +192,9 @@ class DemandeSangController extends Controller
             'date_envoi' => now(),
         ]);
 
-        $res = $this->twilioService->sendSms($donneur->user->telephone, $smsText);
+        $this->twilioService->sendSms($donneur->user->telephone, $smsText);
 
-        $statusMsg = $res['simulated'] ? " (Simulation en local enregistrée)" : "";
-
-        return back()->with('success', "Alerte SMS transmise à {$donneur->user->nom_complet}{$statusMsg}.");
+        return back()->with('success', "Alerte SMS transmise à {$donneur->user->nom_complet}.");
     }
 
     public function annuler(int $id): RedirectResponse

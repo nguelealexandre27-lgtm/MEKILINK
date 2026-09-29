@@ -102,7 +102,7 @@
     </div>
 </section>
 
-<!-- Simulateur Interactif de Compatibilité Sanguine (Natif & Éducatif) -->
+<!-- Vérification Interactive de Compatibilité Sanguine -->
 <section style="padding:60px 0;background:#ffffff;border-bottom:1px solid var(--slate-200);">
     <div class="container">
         <div style="text-align:center;max-width:700px;margin:0 auto 40px;">
@@ -110,7 +110,7 @@
                 Outil Interactif Médical
             </span>
             <h2 style="font-size:2rem;font-weight:800;color:var(--slate-900);margin-top:8px;">
-                Simulateur de Compatibilité Sanguine ABO/Rh
+                Vérification Immédiate de Compatibilité Sanguine ABO/Rh
             </h2>
             <p style="color:var(--slate-600);margin-top:8px;">
                 Vérifiez instantanément les règles immunologiques strictes appliquées par le moteur de calcul d'intelligence artificielle de MEKILINK.

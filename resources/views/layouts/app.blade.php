@@ -164,34 +164,23 @@
         @yield('content')
     </main>
 
-    <!-- Pied de page Professionnel & Académique -->
+    <!-- Pied de page Professionnel -->
     <footer style="background:var(--slate-900);color:var(--slate-400);padding:40px 0 20px;border-top:1px solid var(--slate-800);margin-top:50px;">
         <div class="container">
-            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:30px;margin-bottom:30px;">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:30px;margin-bottom:30px;">
                 <div>
                     <div style="display:flex;align-items:center;gap:8px;color:#fff;font-weight:800;font-size:1.2rem;margin-bottom:12px;">
                         <span style="color:var(--blood-arterial);">●</span> MEKILINK
                     </div>
                     <p style="font-size:0.88rem;line-height:1.6;color:var(--slate-400);">
-                        Plateforme intelligente de mise en relation et de recherche rapide de donneurs de sang compatibles. Projet développé au sein de <strong>KIROVA DIGITAL</strong> par Alexandre NGUELE NTOLO (IAI Cameroun).
+                        Plateforme médicale intelligente de mise en relation et de recherche rapide de donneurs de sang compatibles pour répondre efficacement aux urgences vitales.
                     </p>
-                </div>
-
-                <div>
-                    <h4 style="color:#fff;font-size:0.95rem;margin-bottom:12px;font-weight:700;">Technologies & Intégrations</h4>
-                    <ul style="list-style:none;font-size:0.85rem;line-height:2;">
-                        <li>⚡ Framework <strong>Laravel 12</strong> & PHP 8.2</li>
-                        <li>🧠 IA Prédictive & <strong>Gemini 3.6 Flash</strong></li>
-                        <li>📱 API Messagerie SMS <strong>Twilio</strong></li>
-                        <li>🗺️ Géolocalisation libre <strong>OpenStreetMap</strong></li>
-                        <li>🎨 CSS3 Moderne & JavaScript Natif Pur</li>
-                    </ul>
                 </div>
 
                 <div>
                     <h4 style="color:#fff;font-size:0.95rem;margin-bottom:12px;font-weight:700;">Navigation Rapide</h4>
                     <ul style="list-style:none;font-size:0.85rem;line-height:2;">
-                        <li><a href="{{ route('home') }}" style="color:var(--slate-400);">Accueil & Simulateur</a></li>
+                        <li><a href="{{ route('home') }}" style="color:var(--slate-400);">Accueil & Compatibilité</a></li>
                         <li><a href="{{ route('centres.index') }}" style="color:var(--slate-400);">Trouver un centre de don</a></li>
                         <li><a href="{{ route('login') }}" style="color:var(--slate-400);">Espace Connexion</a></li>
                         <li><a href="{{ route('register') }}" style="color:var(--slate-400);">S'inscrire comme Donneur</a></li>
@@ -200,7 +189,7 @@
             </div>
 
             <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;font-size:0.8rem;">
-                <p>&copy; 2026 MEKILINK - Stage Académique KIROVA DIGITAL. Tous droits réservés.</p>
+                <p>&copy; {{ date('Y') }} MEKILINK. Tous droits réservés.</p>
                 <p>Sauver une vie commence par une décision.</p>
             </div>
         </div>
@@ -236,6 +225,79 @@
             </a>
         @endauth
     </div>
+
+    <!-- Modal Pop-up IA Indisponible -->
+    <div id="ai-unavailable-modal" class="ai-modal-overlay" style="display: {{ session('ai_unavailable') ? 'flex' : 'none' }};">
+        <div class="ai-modal-box">
+            <div class="ai-modal-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+            <h3 class="ai-modal-title">Service IA</h3>
+            <p class="ai-modal-text">{{ session('ai_message', "L'IA n'est pas disponible pour le moment, veuillez réessayer plus tard.") }}</p>
+            <button type="button" class="btn btn-primary" onclick="closeAiUnavailableModal()" style="width:100%;margin-top:18px;justify-content:center;">
+                Compris
+            </button>
+        </div>
+    </div>
+
+    <style>
+        .ai-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .ai-modal-box {
+            background: #ffffff;
+            border-radius: 16px;
+            max-width: 420px;
+            width: 100%;
+            padding: 28px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid #e2e8f0;
+            animation: modalPopIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes modalPopIn {
+            from { opacity: 0; transform: scale(0.92) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .ai-modal-icon {
+            width: 54px;
+            height: 54px;
+            background: #fef2f2;
+            color: #dc2626;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+        .ai-modal-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0 0 8px 0;
+        }
+        .ai-modal-text {
+            font-size: 0.95rem;
+            color: #475569;
+            line-height: 1.5;
+            margin: 0;
+        }
+    </style>
 
     <!-- Script JavaScript Natif Pur -->
     <script src="{{ asset('js/mekilink.js') }}"></script>

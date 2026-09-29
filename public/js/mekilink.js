@@ -76,7 +76,7 @@ function initDisponibiliteToggle() {
 }
 
 /**
- * 2. Simulateur Interactif de Compatibilité Sanguine (Sans rechargement)
+ * 2. Vérification Interactive de Compatibilité Sanguine (Sans rechargement)
  */
 function initCompatibiliteTester() {
     const donorSelect = document.getElementById('calc-donneur');
@@ -268,4 +268,27 @@ function showToast(message, type = 'info') {
         toast.style.transform = 'translateY(10px)';
         setTimeout(() => toast.remove(), 300);
     }, 4500);
+}
+
+/**
+ * Modal Pop-up IA Indisponible
+ */
+function showAiUnavailableModal(message) {
+    const modal = document.getElementById('ai-unavailable-modal');
+    if (modal) {
+        if (message) {
+            const textEl = modal.querySelector('.ai-modal-text');
+            if (textEl) textEl.textContent = message;
+        }
+        modal.style.display = 'flex';
+    } else {
+        alert(message || "L'IA n'est pas disponible pour le moment, veuillez réessayer plus tard.");
+    }
+}
+
+function closeAiUnavailableModal() {
+    const modal = document.getElementById('ai-unavailable-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }
